@@ -5,7 +5,6 @@ nltk==3.7
 pandas==1.4.4
 PySastrawi==1.2.0
 Sastrawi==1.0.1
-scikit_learn==1.0.2
 scikit_learn==1.1.0
 streamlit==1.22.0
 streamlit_authenticator==0.2.2
