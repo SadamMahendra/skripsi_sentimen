@@ -7,8 +7,7 @@ from sklearn import metrics
 import pickle
 from streamlit_option_menu import option_menu
 import matplotlib.pyplot as plt
-from sklearn.metrics import accuracy_score, plot_confusion_matrix
-
+from sklearn.metrics import plot_confusion_matrix
 
 #import model
 pickle_in = open('./data/model.pkl', 'rb')
@@ -77,6 +76,8 @@ def admin_home():
         predic = prediction(X_train, X_test, y_train, y_test).round(2)
         y_pred = svm.predict(X_test)
 
+        st.write()
+
         #menampilkan grafik line tentang polarity pertahun
         data['at'] = pd.to_datetime(data['at'])
         data['tahun'] = data['at'].dt.year
@@ -142,8 +143,7 @@ def admin_home():
         st.pyplot(fig)
 
         st.subheader("Akurasi")
-        accuracy = accuracy_score(y_test, y_pred).round(2)
-        st.info(f"Data Memiliki tingkat akurasi {accuracy * 100}%")
+        st.info(f"Data Memiliki tingkat akurasi {predic*100}%")
 
     if selected == "Sentimen Predictor File":
         st.header("Sentimen Predictor File")
