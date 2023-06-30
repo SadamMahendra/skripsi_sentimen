@@ -3,8 +3,11 @@ import pandas as pd
 from nlp_id.lemmatizer import Lemmatizer
 from nlp_id.stopword import StopWord
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
+from sklearn.feature_extraction.text import TfidfVectorizer
 import nltk
 from nltk import word_tokenize
+from sklearn.svm import SVC
+from sklearn import metrics
 
 #kamuss
 df_positive = pd.read_csv('https://raw.githubusercontent.com/ramaprakoso/analisis-sentimen/master/kamus/positif_ta2.txt', sep='\t',names=['positive'])
@@ -39,6 +42,9 @@ def convert_slangword(text):
     normalized_text = ' '.join(normalized_words)
     return normalized_text
 
+#stopword
+stopword = StopWord()
+
 #split text
 def split_word(teks):
     list_teks = []
@@ -46,9 +52,14 @@ def split_word(teks):
         list_teks.append(txt)
     return list_teks
 
-#stopword
-stopword = StopWord()
-stopwords = stopword.get_stopword()
+#menghilangkan kata kata yang tidak ingin dipakai
+unwanted_words = ['jan','feb','mar','apr','mei','jun','jul','aug','sep','oct','nov','dec','uaddown','weareuad','Iam','https','igshid']
+nltk.download('punkt')
+
+def RemoveUnwantedwords(text):
+    word_tokens = word_tokenize(text)
+    filtered_sentence = [word for word in word_tokens if not word in unwanted_words]
+    return ' '.join(filtered_sentence)
 
 #menghitung polarty
 def sentiment_analysis_lexicon_indonesia(text):
@@ -77,15 +88,38 @@ def sentiment_analysis_lexicon_indonesia(text):
     result = {'positif': positive_words,'negatif':negative_words,'netral': neutral_words}
     return score, polarity, result, positive_words, negative_words
 
-#menghilangkan kata kata yang tidak ingin dipakai
-unwanted_words = ['jan','feb','mar','apr','mei','jun','jul','aug','sep','oct','nov','dec','uaddown','weareuad','Iam','https','igshid']
-nltk.download('punkt')
+#tfidf
+def process_data(df):
+    df['Text_Clean_New'] = df['Text_Clean'].astype(str)
+    tfidf = TfidfVectorizer()
+    ulasan = df['Text_Clean_New'].values.tolist()
+    tfidf_vect = tfidf.fit(ulasan)
+    X = tfidf_vect.transform(ulasan)
+    y = df['polarity']
+    return X, y
 
-def RemoveUnwantedwords(text):
-    word_tokens = word_tokenize(text)
-    filtered_sentence = [word for word in word_tokens if not word in unwanted_words]
-    return ' '.join(filtered_sentence)
+#ranking
+def calculate_tfidf_ranking(df):
+    max_features = len(df)
 
+    tf_idf = TfidfVectorizer(max_features=max_features, binary=True)
+    tfidf_mat = tf_idf.fit_transform(df["Text_Clean"]).toarray()
+
+    terms = tf_idf.get_feature_names_out()
+
+    sums = tfidf_mat.sum(axis=0)
+
+    data = []
+    for col, term in enumerate(terms):
+        data.append((term, sums[col]))
+
+    ranking = pd.DataFrame(data, columns=['term', 'rank'])
+    ranking.sort_values('rank', ascending=False, inplace=True)
+
+    return ranking
+
+
+#user
 def hasilTextMining(text):
     text = re.sub(r'j&t', 'jnt', text, flags=re.IGNORECASE)
     caseFolding = CaseFolding(text)
@@ -105,6 +139,7 @@ def hasilUltimatum(text):
 
     return score, polarity, result
 
+#admin
 def hasilFileMining(df, selected_column):
     df[selected_column] = df[selected_column].str.replace('j&t', 'jnt', case=False)
     df["caseFolding"] = df[selected_column].apply(CaseFolding)
@@ -120,46 +155,30 @@ def hasilFileMining(df, selected_column):
     hasil = list(zip(*hasil))
     df['polarity_score'] = hasil[0]
     df['polarity'] = hasil[1]
+    hasil_positive = hasil[3]
+    hasil_negative = hasil[4]
 
-    return df['Text_Clean'],df['polarity'],hasil
+    return df, hasil_positive, hasil_negative
 
-def process_top_10_words(df,hasil):
-    all_positive_words = [word for sublist in hasil[3] for word in sublist]
-    all_negative_words = [word for sublist in hasil[4] for word in sublist]
+#top word setiap 10 kata negatif dan positif
+def process_top_10_words(hasil_positive,hasil_negative):
+    all_positive_words = [word for sublist in hasil_positive for word in sublist]
+    all_negative_words = [word for sublist in hasil_negative for word in sublist]
     positive_freq = pd.Series(all_positive_words).value_counts().reset_index().rename(columns={'index': 'Positive Word', 0: 'Frequency'})
     negative_freq = pd.Series(all_negative_words).value_counts().reset_index().rename(columns={'index': 'Negative Word', 0: 'Frequency'})
     top_10_positive = positive_freq.head(10)
     top_10_negative = negative_freq.head(10)
     return top_10_positive, top_10_negative
 
-# def remove_stopwords_with_exception(text, stopwords, kamus_positif, kamus_negatif):
-#     words = text.split()
-#     cleaned_words = []
-#     for word in words:
-#         word = word.strip(string.punctuation)  # Menghapus tanda baca dari kata
-#         if word in kamus_positif or word in kamus_negatif or word not in stopwords:
-#             cleaned_words.append(word)
-#     return " ".join(cleaned_words)
+#svm
+def predic_SVM(X_train, X_test, y_train, y_test):
+    svm = SVC(
+    kernel = 'linear',
+        C = 1)
 
-#split word
-# def split_words(sentence, positive_words, negative_words):
-#     words = sentence.split()
-#     result = []
-#     i = 0
-#     while i < len(words):
-#         word = words[i]
-#         if word in positive_words or word in negative_words:
-#             result.append(word)
-#             i += 1
-#         elif i+1 < len(words):
-#             merged_word = word + ' ' + words[i+1]
-#             if merged_word in positive_words or merged_word in negative_words:
-#                 result.append(merged_word)
-#                 i += 2
-#             else:
-#                 result.append(word)
-#                 i += 1
-#         else:
-#             result.append(word)
-#             i += 1
-#     return result
+    svm.fit(X_train, y_train)
+    y_pred = svm.predict(X_test)
+    score = metrics.accuracy_score(y_test, y_pred)
+    score_svmlk = score
+
+    return score_svmlk, svm

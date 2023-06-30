@@ -35,7 +35,7 @@ def admin_record():
             (df['at'].dt.year == tahun_filter) &
             (df['at'].dt.month == bulan_filter)
         ]
-        # avg_polarity = df.groupby('bulan')['Polarity'].mean()
+
         submitButton = st.button("submit")
 
         if submitButton:
@@ -96,19 +96,3 @@ def admin_record():
 
 if __name__ == "__main__":
     admin_record()
-
-
-    #  df['tahun'] = df['at'].dt.year
-   
-    # # Menghitung jumlah kalimat negatif dan positif per tahun sampai tahun terakhir dalam dataframe
-    # tahun_terakhir = df['tahun'].max()
-    # df_filtered = df[df['tahun'] <= tahun_terakhir]
-    # jumlah_negatif = df_filtered[df_filtered['polarity'] == 'negative'].groupby('tahun').size().reindex(range(df_filtered['tahun'].min(), tahun_terakhir+1), fill_value=0)
-    # jumlah_positif = df_filtered[df_filtered['polarity'] == 'positive'].groupby('tahun').size().reindex(range(df_filtered['tahun'].min(), tahun_terakhir+1), fill_value=0)
-
-    # # Membuat grafik menggunakan st.line_chart()
-    # data_chart = pd.DataFrame({
-    #     'negative': jumlah_negatif,
-    #     'positive': jumlah_positif
-    # })
-    # st.line_chart(data_chart)

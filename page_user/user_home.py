@@ -1,5 +1,9 @@
 import streamlit as st
-from function.functions import hasilUltimatum
+import pickle
+from function.functions import hasilUltimatum, hasilTextMining
+
+pickle_in = open('./data/model.pkl', 'rb')
+svm,tfidf = pickle.load(pickle_in)
 
 def homePage():
     st.header("Streamlit Predictor")
@@ -7,6 +11,33 @@ def homePage():
     submitButton = st.button("analisis")
     if submitButton:
         score,polarity,result = hasilUltimatum(rawText)
+        hasil_bersih = hasilTextMining(rawText)
+
+        positive_negative = {
+            "positive": [],
+            "negative": [],
+            "neutral": []
+        }
+        for i in hasil_bersih:
+            tf = tfidf.transform([i])
+            hasil = svm.predict(tf)
+            if (hasil[0] ==  "negative"):
+                positive_negative["negative"].append(i)
+            if (hasil[0] ==  "positive"):
+                positive_negative["positive"].append(i)
+            if (hasil[0] == "neutral"):
+                positive_negative["neutral"].append(i)
+        
+        positive_count = len(positive_negative["positive"])
+        negative_count = len(positive_negative["negative"])
+
+        if (negative_count > positive_count):
+            st.warning("Hasil: Negative")
+        else:
+            st.success("Hasil: Positive")
+
+        st.write(positive_negative)
+ 
         col1,col2 = st.columns(2)
         if polarity == 'negative':
             with col1:

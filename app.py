@@ -51,11 +51,13 @@ def app():
     if authenticator_status == None:
          st.warning("Tolong masukan username dan passsword anda")
 
-    if authenticator_status == True:
-        st.sidebar.title(f"Selamat Datang, {name}")      
+    if authenticator_status == True:   
         response = get_user(username) 
-        user_data = response 
+        user_data = response
+        nama = user_data["name"] 
         level = user_data["level"]
+
+        st.sidebar.title(f"Selamat Datang, {nama}")   
         
         if level == "admin":
             menu = ["HOME","LAPORAN","REGISTER"]
@@ -67,7 +69,6 @@ def app():
                 admin_record()
             if selected == "REGISTER":
                 admin_register(username)
-
 
         if level == "user":
             menu = ["HOME","LAPORAN", "SETTING"]
