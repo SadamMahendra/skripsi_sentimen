@@ -43,7 +43,7 @@ def admin_home():
         st.write("Berisikan data yang belum di olah")
         st.write(data_raw)
 
-        @st.cache_data(show_spinner="Data Cache untuk proses sedang disiapkan")
+        #@st.cache_data(show_spinner="Data Cache untuk proses sedang disiapkan")
         def load_proses():
             df, hasil_positive, hasil_negative = ft.hasilFileMining(data_raw,'content')
             top_10_positive, top_10_negative = ft.process_top_10_words(hasil_positive, hasil_negative)
@@ -80,7 +80,7 @@ def admin_home():
 
         df, accuracy, top_10_positive, top_10_negative, ranking, data_chart, X_test, y_test, y_train, y, svm, df_classification_report = load_proses()
 
-        @st.cache_data(show_spinner="Data chace untuk show data sedang disiapkan")
+        #@st.cache_data(show_spinner="Data chace untuk show data sedang disiapkan")
         def show_data():
             st.subheader("Case Folding")
             st.write("Didalam tahap Case Folding, Memperkecilkan text(lower text), serta membersihkan kata yang tidak perlu seperti nomor dll")
