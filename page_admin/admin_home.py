@@ -169,26 +169,10 @@ def admin_home():
                     predic, svm = ft.predic_SVM(X_train, X_test, y_train, y_test)
                     
                     accuracy = f"{predic.round(2)*100}%"
-                    
-                    #menampilkan grafik line tentang polarity pertahun
-                    df['at'] = pd.to_datetime(df['at'])
-                    df['tahun'] = df['at'].dt.year
-            
-                    # Menghitung jumlah kalimat negatif dan positif per tahun sampai tahun terakhir dalam dataframe
-                    tahun_terakhir = df['tahun'].max()
-                    df_filtered = df[df['tahun'] <= tahun_terakhir]
-                    jumlah_negatif = df_filtered[df_filtered['polarity'] == 'negative'].groupby('tahun').size().reindex(range(df_filtered['tahun'].min(), tahun_terakhir+1), fill_value=0)
-                    jumlah_positif = df_filtered[df_filtered['polarity'] == 'positive'].groupby('tahun').size().reindex(range(df_filtered['tahun'].min(), tahun_terakhir+1), fill_value=0)
 
-                    # Membuat grafik menggunakan st.line_chart()
-                    data_chart = pd.DataFrame({
-                        'negative': jumlah_negatif,
-                        'positive': jumlah_positif
-                    })
-
-                    return df, accuracy, top_10_positive, top_10_negative, ranking, data_chart, X_test, y_test, y_train, y, svm
+                    return df, accuracy, top_10_positive, top_10_negative, ranking, X_test, y_test, y_train, y, svm
                 
-                df, accuracy, top_10_positive, top_10_negative, ranking, data_chart, X_test, y_test, y_train, y, svm = load_proses()
+                df, accuracy, top_10_positive, top_10_negative, ranking, X_test, y_test, y_train, y, svm = load_proses()
 
                 def show_data():
                     st.subheader("Case Folding")
@@ -224,10 +208,6 @@ def admin_home():
                     st.table(df["polarity"].value_counts())
 
                     st.bar_chart(df["polarity"].value_counts())
-
-                    st.subheader("Polarity Tahunan")
-                    st.write("Menampilkan polarity setiap tahun")
-                    st.line_chart(data_chart)
 
                     st.subheader("TF-IDF")
                     st.write(ranking)
