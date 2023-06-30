@@ -80,7 +80,7 @@ def admin_home():
 
         df, accuracy, top_10_positive, top_10_negative, ranking, data_chart, X_test, y_test, y_train, y, svm, df_classification_report = load_proses()
 
-        @st.cache_data
+        @st.cache_data(show_spinner="Data chace untuk show data sedang disiapkan")
         def show_data():
             st.subheader("Case Folding")
             st.write("Didalam tahap Case Folding, Memperkecilkan text(lower text), serta membersihkan kata yang tidak perlu seperti nomor dll")
