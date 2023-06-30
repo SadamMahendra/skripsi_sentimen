@@ -160,88 +160,88 @@ def admin_home():
 
             submitFile = st.button("Analisis")
             if submitFile:
-                # def load_proses():
-                df, hasil_positive, hasil_negative = ft.hasilFileMining(data_raw,selected_column)
-                top_10_positive, top_10_negative = ft.process_top_10_words(hasil_positive, hasil_negative)
-                ranking = ft.calculate_tfidf_ranking(df)
-                X, y = ft.process_data(df)
-                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=0)
-                predic, svm = ft.predic_SVM(X_train, X_test, y_train, y_test)
+                def load_proses():
+                    df, hasil_positive, hasil_negative = ft.hasilFileMining(data_raw,selected_column)
+                    top_10_positive, top_10_negative = ft.process_top_10_words(hasil_positive, hasil_negative)
+                    ranking = ft.calculate_tfidf_ranking(df)
+                    X, y = ft.process_data(df)
+                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=0)
+                    predic, svm = ft.predic_SVM(X_train, X_test, y_train, y_test)
+                    
+                    accuracy = f"{predic.round(2)*100}%"
+
+                    return df, accuracy, top_10_positive, top_10_negative, ranking, X_test, y_test, y_train, y, svm
                 
-                accuracy = f"{predic.round(2)*100}%"
+                df, accuracy, top_10_positive, top_10_negative, ranking, X_test, y_test, y_train, y, svm = load_proses()
 
-                    # return df, accuracy, top_10_positive, top_10_negative, ranking, X_test, y_test, y_train, y, svm
-                
-                # df, accuracy, top_10_positive, top_10_negative, ranking, X_test, y_test, y_train, y, svm = load_proses()
+                def show_data():
+                    st.subheader("Case Folding")
+                    st.write("Didalam tahap Case Folding, Memperkecilkan text(lower text), serta membersihkan kata yang tidak perlu seperti nomor dll")
+                    st.write(df['caseFolding'])
 
-                # def show_data():
-                st.subheader("Case Folding")
-                st.write("Didalam tahap Case Folding, Memperkecilkan text(lower text), serta membersihkan kata yang tidak perlu seperti nomor dll")
-                st.write(df['caseFolding'])
+                    st.subheader("Lematisasi")
+                    st.write("menyederhakan kata ke dalam bentuk kamus")
+                    st.write(df['lemmatizer'])
 
-                st.subheader("Lematisasi")
-                st.write("menyederhakan kata ke dalam bentuk kamus")
-                st.write(df['lemmatizer'])
+                    st.subheader("Stemmer")
+                    st.write("Penguraian bentuk dari suatu kata menjadi bentuk dasar")
+                    st.write(df['stemmer'])
 
-                st.subheader("Stemmer")
-                st.write("Penguraian bentuk dari suatu kata menjadi bentuk dasar")
-                st.write(df['stemmer'])
+                    st.subheader("Slang Word")
+                    st.write("Merubah kata alay menjadi kata baku")
+                    st.write(df["slang"])
 
-                st.subheader("Slang Word")
-                st.write("Merubah kata alay menjadi kata baku")
-                st.write(df["slang"])
+                    st.subheader("Stop Word")
+                    st.write("Menghapus kata yang tidak perlu")
+                    st.write(df["stopword"])
 
-                st.subheader("Stop Word")
-                st.write("Menghapus kata yang tidak perlu")
-                st.write(df["stopword"])
+                    st.subheader("Text Clean")
+                    st.write("pembersihan text terakhir, di dalam proses ini menghapus kata di bawah 3 huruf")
+                    st.write(df["Text_Clean"])
 
-                st.subheader("Text Clean")
-                st.write("pembersihan text terakhir, di dalam proses ini menghapus kata di bawah 3 huruf")
-                st.write(df["Text_Clean"])
+                    st.subheader("Split Text")
+                    st.write("membagi setiap kata")
+                    st.write(df["Text_Clean_split"])
 
-                st.subheader("Split Text")
-                st.write("membagi setiap kata")
-                st.write(df["Text_Clean_split"])
+                    st.subheader("Polarity Count")
+                    st.write("hasil polarity")
+                    st.table(df["polarity"].value_counts())
 
-                st.subheader("Polarity Count")
-                st.write("hasil polarity")
-                st.table(df["polarity"].value_counts())
+                    st.bar_chart(df["polarity"].value_counts())
 
-                st.bar_chart(df["polarity"].value_counts())
+                    st.subheader("TF-IDF")
+                    st.write(ranking)
 
-                st.subheader("TF-IDF")
-                st.write(ranking)
+                    colp1,colp2 = st.columns(2)
 
-                colp1,colp2 = st.columns(2)
+                    with colp1:
+                        st.subheader("Top 10 Positive Words")
+                        st.dataframe(top_10_positive)
 
-                with colp1:
-                    st.subheader("Top 10 Positive Words")
-                    st.dataframe(top_10_positive)
+                    with colp2:
+                        st.subheader("Top 10 Negative Words")
+                        st.dataframe(top_10_negative)
+                    
+                    data_share = {
+                        "Jenis Data": ["Semua Data", "Data Test", "Data Latih"],
+                        "Jumlah Data": [len(df), len(y_test), len(y_train)]
+                    }
 
-                with colp2:
-                    st.subheader("Top 10 Negative Words")
-                    st.dataframe(top_10_negative)
-                
-                data_share = {
-                    "Jenis Data": ["Semua Data", "Data Test", "Data Latih"],
-                    "Jumlah Data": [len(df), len(y_test), len(y_train)]
-                }
+                    st.subheader("Pembagian Data")
+                    st.table(data_share)
+                    
+                    st.subheader("Confusion Matrix")
+                    fig, ax = plt.subplots()
+                    plot_confusion_matrix(svm, X_test, y_test, ax=ax)
+                    
+                    st.pyplot(fig)
 
-                st.subheader("Pembagian Data")
-                st.table(data_share)
-                
-                st.subheader("Confusion Matrix")
-                fig, ax = plt.subplots()
-                plot_confusion_matrix(svm, X_test, y_test, ax=ax)
-                
-                st.pyplot(fig)
+                    st.subheader("Akurasi")
+                    st.info(f"Data Memiliki tingkat akurasi {accuracy}")
 
-                st.subheader("Akurasi")
-                st.info(f"Data Memiliki tingkat akurasi {accuracy}")
+                    st.download_button(label='Download CSV',data =df.to_csv(), file_name="model_df.csv" ,mime='text/csv')
 
-                st.download_button(label='Download CSV',data =df.to_csv(), file_name="model_df.csv" ,mime='text/csv')
-
-                # show_data()          
+                show_data()          
             
 if __name__ == "__main__":
     admin_home()    
