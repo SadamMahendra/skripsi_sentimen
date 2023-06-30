@@ -181,4 +181,4 @@ def predic_SVM(X_train, X_test, y_train, y_test):
     score = metrics.accuracy_score(y_test, y_pred)
     score_svmlk = score
 
-    return score_svmlk, svm
+    return score_svmlk, svm, y_pred

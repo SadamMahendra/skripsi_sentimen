@@ -7,6 +7,7 @@ import pickle
 from streamlit_option_menu import option_menu
 import matplotlib.pyplot as plt
 from sklearn.metrics import plot_confusion_matrix
+from sklearn.metrics import classification_report
 
 #import model
 pickle_in = open('./data/model.pkl', 'rb')
@@ -49,7 +50,13 @@ def admin_home():
             ranking = ft.calculate_tfidf_ranking(df)
             X, y = ft.process_data(df)
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=0)
-            predic, svm = ft.predic_SVM(X_train, X_test, y_train, y_test)
+            predic, svm, y_pred = ft.predic_SVM(X_train, X_test, y_train, y_test)
+
+            # Simpan laporan klasifikasi dalam variabel
+            report = classification_report(y_test, y_pred, output_dict=True)
+
+            # Konversi laporan menjadi DataFrame pandas
+            df_classification_report = pd.DataFrame(report).transpose()
             
             accuracy = f"{predic.round(2)*100}%"
             
@@ -69,9 +76,9 @@ def admin_home():
                 'positive': jumlah_positif
             })
 
-            return df, accuracy, top_10_positive, top_10_negative, ranking, data_chart, X_test, y_test, y_train, y, svm
+            return df, accuracy, top_10_positive, top_10_negative, ranking, data_chart, X_test, y_test, y_train, y, svm, df_classification_report
 
-        df, accuracy, top_10_positive, top_10_negative, ranking, data_chart, X_test, y_test, y_train, y, svm = load_proses()
+        df, accuracy, top_10_positive, top_10_negative, ranking, data_chart, X_test, y_test, y_train, y, svm, df_classification_report = load_proses()
 
         @st.cache_data
         def show_data():
@@ -140,6 +147,9 @@ def admin_home():
             
             st.pyplot(fig)
 
+            st.subheader("RFC Classification Report")
+            st.dataframe(df_classification_report, use_container_width=True)
+
             st.subheader("Akurasi")
             st.info(f"Data Memiliki tingkat akurasi {accuracy}")
 
@@ -166,13 +176,20 @@ def admin_home():
                     ranking = ft.calculate_tfidf_ranking(df)
                     X, y = ft.process_data(df)
                     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=0)
-                    predic, svm = ft.predic_SVM(X_train, X_test, y_train, y_test)
+                    predic, svm, y_pred = ft.predic_SVM(X_train, X_test, y_train, y_test)
+
+                    # Simpan laporan klasifikasi dalam variabel
+                    report = classification_report(y_test, y_pred, output_dict=True)
+
+                    # Konversi laporan menjadi DataFrame pandas
+                    df_classification_report = pd.DataFrame(report).transpose()
+
                     
                     accuracy = f"{predic.round(2)*100}%"
 
-                    return df, accuracy, top_10_positive, top_10_negative, ranking, X_test, y_test, y_train, y, svm
+                    return df, accuracy, top_10_positive, top_10_negative, ranking, X_test, y_test, y_train, y, svm, df_classification_report
                 
-                df, accuracy, top_10_positive, top_10_negative, ranking, X_test, y_test, y_train, y, svm = load_proses()
+                df, accuracy, top_10_positive, top_10_negative, ranking, X_test, y_test, y_train, y, svm, df_classification_report = load_proses()
 
                 def show_data():
                     st.subheader("Case Folding")
@@ -235,6 +252,9 @@ def admin_home():
                     plot_confusion_matrix(svm, X_test, y_test, ax=ax)
                     
                     st.pyplot(fig)
+
+                    st.subheader("RFC Classification Report")
+                    st.dataframe(df_classification_report, use_container_width=True)
 
                     st.subheader("Akurasi")
                     st.info(f"Data Memiliki tingkat akurasi {accuracy}")
