@@ -32,28 +32,28 @@ def homePage():
         negative_count = len(positive_negative["negative"])
 
         if (negative_count > positive_count):
-            st.warning("Hasil: Negative")
+            st.warning("Hasil: Text berdominan negative")
         else:
-            st.success("Hasil: Positive")
+            st.success("Hasil: Text berdominan positive")
 
         st.write(positive_negative)
  
-        col1,col2 = st.columns(2)
-        if polarity == 'negative':
-            with col1:
-                st.warning(f"Polarity berdominan {polarity} dengan score {score}")
-            with col2:
-                st.write(result)
-        elif polarity == 'positive':
-            with col1:
-                st.success(f"Polarity berdominan {polarity}")
-            with col2:
-                st.write(result)
-        else:
-            with col1:
-                st.info(f"Polarity berdominan {polarity}")
-            with col2:
-                st.write(result)
+        # col1,col2 = st.columns(2)
+        # if polarity == 'negative':
+        #     with col1:
+        #         st.warning(f"Polarity berdominan {polarity} dengan score {score}")
+        #     with col2:
+        #         st.write(result)
+        # elif polarity == 'positive':
+        #     with col1:
+        #         st.success(f"Polarity berdominan {polarity}")
+        #     with col2:
+        #         st.write(result)
+        # else:
+        #     with col1:
+        #         st.info(f"Polarity berdominan {polarity}")
+        #     with col2:
+        #         st.write(result)
 
 if __name__ == "__main__":
     homePage()
