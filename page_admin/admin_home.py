@@ -8,17 +8,8 @@ from streamlit_option_menu import option_menu
 import matplotlib.pyplot as plt
 from sklearn.metrics import plot_confusion_matrix
 from sklearn.metrics import classification_report
+from sklearn.metrics import ConfusionMatrixDisplay
 
-#import model
-pickle_in = open('./data/model.pkl', 'rb')
-svm,tfidf = pickle.load(pickle_in)
-
-
-def prediction(X_train, X_test, y_train, y_test):
-    svm.fit(X_train, y_train)
-    y_pred = svm.predict(X_test)
-    score = metrics.accuracy_score(y_test, y_pred)
-    return score
 
 @st.cache_data
 def data_raw_jnt ():
@@ -76,9 +67,9 @@ def admin_home():
                 'positive': jumlah_positif
             })
 
-            return df, accuracy, top_10_positive, top_10_negative, ranking, data_chart, X_test, y_test, y_train, y, svm, df_classification_report
+            return df, accuracy, top_10_positive, top_10_negative, ranking, data_chart,y_test, y_train, y_pred, df_classification_report
 
-        df, accuracy, top_10_positive, top_10_negative, ranking, data_chart, X_test, y_test, y_train, y, svm, df_classification_report = load_proses()
+        df, accuracy, top_10_positive, top_10_negative, ranking, data_chart,y_test, y_train, y_pred, df_classification_report = load_proses()
 
         @st.cache_data
         def show_data():
@@ -143,8 +134,7 @@ def admin_home():
             
             st.subheader("Confusion Matrix")
             fig, ax = plt.subplots()
-            plot_confusion_matrix(svm, X_test, y_test, ax=ax)
-            
+            ConfusionMatrixDisplay.from_predictions(y_test, y_pred, ax=ax)                    
             st.pyplot(fig)
 
             st.subheader("RFC Classification Report")
@@ -187,9 +177,9 @@ def admin_home():
                     
                     accuracy = f"{predic.round(2)*100}%"
 
-                    return df, accuracy, top_10_positive, top_10_negative, ranking, X_test, y_test, y_train, y, svm, df_classification_report
+                    return df, accuracy, top_10_positive, top_10_negative, ranking, y_test, y_train, y_pred, df_classification_report
                 
-                df, accuracy, top_10_positive, top_10_negative, ranking, X_test, y_test, y_train, y, svm, df_classification_report = load_proses()
+                df, accuracy, top_10_positive, top_10_negative, ranking, y_test, y_train, y_pred, df_classification_report = load_proses()
 
                 def show_data():
                     st.subheader("Case Folding")
@@ -249,8 +239,7 @@ def admin_home():
                     
                     st.subheader("Confusion Matrix")
                     fig, ax = plt.subplots()
-                    plot_confusion_matrix(svm, X_test, y_test, ax=ax)
-                    
+                    ConfusionMatrixDisplay.from_predictions(y_test, y_pred, ax=ax)                    
                     st.pyplot(fig)
 
                     st.subheader("RFC Classification Report")
