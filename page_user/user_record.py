@@ -46,7 +46,7 @@ def user_record():
             st.write("Tidak ada data untuk bulan dan tahun yang dipilih.")
         else:
             filter_dataframe = filtered_df[['Text_Clean','at','polarity_score','polarity']]
-            with st.expander("Data Report"):
+            with st.expander("Data Report",expanded=True):
                 st.write(filter_dataframe.reset_index(drop=True))
             # Menghitung jumlah kemunculan 'negatif' dan 'positif' berdasarkan bulan
             polarity_counts = filtered_df['polarity'].value_counts()
@@ -101,7 +101,7 @@ def user_record():
             st.write(f"Data di ambil dari {tanggal} sampai {end_date}")
 
             filter_dataframe = filtered_df[['Text_Clean','at','polarity_score','polarity']]
-            with st.expander("Data Report"):
+            with st.expander("Data Report",expanded=True):
                 st.write(filter_dataframe.reset_index(drop=True))
 
             # Menghitung jumlah kemunculan 'negatif' dan 'positif' berdasarkan bulan
