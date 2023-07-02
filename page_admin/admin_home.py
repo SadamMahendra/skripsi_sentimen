@@ -16,6 +16,10 @@ def data_raw_jnt ():
     return pd.read_csv("./data/Scrapped_J&T.csv")
 
 def admin_home():
+    st.header("🏡 Home",
+              help="Halaman untuk Menampilkan Data Visual Atau Halaman Sentiment Predictor untuk file")
+    st.markdown("---")
+
     selected = option_menu(
         None, ["Data Visualisasi","Sentimen Predictor File"], 
         icons=['bar-chart-fill',"file-earmark-plus"], 

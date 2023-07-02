@@ -1,9 +1,12 @@
 import streamlit as st
 import function.config as db
 import streamlit_authenticator as stauth
+import time
 
 def user_update(username):
-    st.header("Update User")
+    st.header("⚙️ Account Management",
+              help="Halaman untuk mengupdate data user")
+    st.markdown("---")
     response = db.get_user(username) 
     user_data = response 
     name = user_data["name"]
@@ -25,6 +28,8 @@ def user_update(username):
             else:
                 db.update_user(username,updates={"name": name_user, "password" : hashed_password})
                 st.success("Pembaharuan Berhasil")
+                time.sleep(1)
+                st.experimental_rerun()
 
 if __name__ == "__main__":
     user_update()

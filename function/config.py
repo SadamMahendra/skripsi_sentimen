@@ -11,7 +11,7 @@ db_drive = deta.Drive("datas")
 def insert_user(username,name,password,auth):
     try:
         db.insert({"key": username, "name": name, "password": password, "level": auth})
-        return st.success("Berhasil Registrasi")
+        return st.success(f"Berhasil Registrasi {username}")
     except:
         return st.warning("username telah dipakai") 
 

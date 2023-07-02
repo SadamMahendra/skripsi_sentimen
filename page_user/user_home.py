@@ -1,16 +1,19 @@
 import streamlit as st
 import pickle
-from function.functions import hasilUltimatum, hasilTextMining
+from function.functions import hasilTextMining
 
 pickle_in = open('./data/model.pkl', 'rb')
 svm,tfidf = pickle.load(pickle_in)
 
 def homePage():
-    st.header("Streamlit Predictor")
-    rawText =  st.text_area("Masukan Text disini :")
+    st.header("💬 Sentiment Predictor",
+              help="Halaman untuk memprediksi postif atau negatif dari suatu kalimat")
+    st.markdown("---")
+    rawText =  st.text_area("Masukan Text disini :",
+                            placeholder="Paket yang dipesan dengan Jnt cepat sampai")
     submitButton = st.button("analisis")
     if submitButton:
-        score,polarity,result = hasilUltimatum(rawText)
+        # score,polarity,result = hasilUltimatum(rawText)
         hasil_bersih = hasilTextMining(rawText)
 
         positive_negative = {
@@ -37,23 +40,6 @@ def homePage():
             st.success("Hasil: Text berdominan positive")
 
         st.write(positive_negative)
- 
-        # col1,col2 = st.columns(2)
-        # if polarity == 'negative':
-        #     with col1:
-        #         st.warning(f"Polarity berdominan {polarity} dengan score {score}")
-        #     with col2:
-        #         st.write(result)
-        # elif polarity == 'positive':
-        #     with col1:
-        #         st.success(f"Polarity berdominan {polarity}")
-        #     with col2:
-        #         st.write(result)
-        # else:
-        #     with col1:
-        #         st.info(f"Polarity berdominan {polarity}")
-        #     with col2:
-        #         st.write(result)
 
 if __name__ == "__main__":
     homePage()

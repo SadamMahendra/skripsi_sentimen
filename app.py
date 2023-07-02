@@ -29,6 +29,17 @@ def fetch_all_users():
 def get_user(username):
     return db.get(username)
 
+st.set_page_config(
+    page_title="Sentimen Analisis App",
+    page_icon="📦",
+    layout="wide",
+    initial_sidebar_state="expanded",
+    menu_items={
+        'Get Help': 'https://github.com/SadamMahendra',
+        'About': "Aplikasi Sentimen Analisis Jnt dibuat untuk memenuhi skripsi"
+    }
+)
+
 def app():
     users = fetch_all_users()
     usernames = [user["key"] for user in users]
@@ -57,28 +68,28 @@ def app():
         nama = user_data["name"] 
         level = user_data["level"]
 
-        st.sidebar.title(f"Selamat Datang, {nama}")   
+        st.sidebar.title(f"Hallo, {nama}")   
         
         if level == "admin":
-            menu = ["HOME","LAPORAN","REGISTER"]
+            menu = ["🏡 Home","📖 Report","⚙️ Account Management"]
             selected = st.sidebar.selectbox("Navigasi",menu)
             authenticator.logout("logout","sidebar")  
-            if selected == "HOME":
+            if selected == "🏡 Home":
                 admin_home()
-            if selected == "LAPORAN":
+            if selected == "📖 Report":
                 admin_record()
-            if selected == "REGISTER":
+            if selected == "⚙️ Account Management":
                 admin_register(username)
 
         if level == "user":
-            menu = ["HOME","LAPORAN", "SETTING"]
+            menu = ["💬 Sentiment Predictor","📖 Report", "⚙️ Account Management"]
             selected = st.sidebar.selectbox("Navigasi",menu)
             authenticator.logout("logout","sidebar")  
-            if selected == "HOME":
+            if selected == "💬 Sentiment Predictor":
                 user_home()
-            if selected == "LAPORAN":
+            if selected == "📖 Report":
                 user_record()
-            if selected == "SETTING":
+            if selected == "⚙️ Account Management":
                 user_update(username)
 
 if __name__ == "__main__":
