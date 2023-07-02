@@ -53,7 +53,7 @@ def app():
         credentials["usernames"].update({un:user_dict})
 
     authenticator = stauth.Authenticate(credentials, "app_home", "auth", cookie_expiry_days=30)
-    name, authenticator_status, username = authenticator.login("Login", "main")
+    name_user, authenticator_status, username = authenticator.login("Login", "main")
 
     if authenticator_status == False:
         st.error("Username/Passwordnya salah")
