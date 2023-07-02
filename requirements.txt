@@ -8,3 +8,4 @@ scikit_learn==1.1.0
 streamlit==1.22.0
 streamlit_authenticator==0.2.2
 streamlit_option_menu==0.3.6
+xlsxwriter==3.0.3
