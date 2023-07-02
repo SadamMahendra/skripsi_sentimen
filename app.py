@@ -32,7 +32,6 @@ def get_user(username):
 st.set_page_config(
     page_title="Sentimen Analisis App",
     page_icon="📦",
-    layout="wide",
     initial_sidebar_state="expanded",
     menu_items={
         'Get Help': 'https://github.com/SadamMahendra',
