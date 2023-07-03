@@ -1,4 +1,5 @@
-import unicodedata,re
+import re
+from unidecode import unidecode
 import pandas as pd
 from nlp_id.lemmatizer import Lemmatizer
 from nlp_id.stopword import StopWord
@@ -17,11 +18,17 @@ list_negative = list(df_negative.iloc[::,0])
 
 #CaseFolding
 def CaseFolding(text):
-    text = unicodedata.normalize('NFKD',text).encode('ascii','ignore').decode('utf-8','ignore')
-    text = re.sub(r'[\W_]+',' ',text)
-    text = re.sub(r'\d+', '', text).strip()
     text = text.lower()
-    text = re.sub('[\s]+', ' ', text)
+    text = unidecode(text)
+    return text
+
+def cleansing(text):
+    # menghapus karakter yang bukan huruf, angka, atau spasi
+    text = re.sub(r'[^\w\s]', ' ', text)
+    # menghapus angka menjadi satu spasi
+    text = re.sub(r'\d+', '', text)
+    # menghapus multi-spasi menjadi satu spasi
+    text = re.sub(r'\s+', ' ', text).strip()
     return text
 
 #lematizer
@@ -143,7 +150,8 @@ def hasilUltimatum(text):
 def hasilFileMining(df, selected_column):
     df[selected_column] = df[selected_column].str.replace('j&t', 'jnt', case=False)
     df["caseFolding"] = df[selected_column].apply(CaseFolding)
-    df["lemmatizer"] = df["caseFolding"].apply(lemmatizer.lemmatize)
+    df["cleansing"] = df["caseFolding"].apply(cleansing)
+    df["lemmatizer"] = df["cleansing"].apply(lemmatizer.lemmatize)
     df["stemmer"] = df["lemmatizer"].apply(stemmer.stem)
     df["slang"] = df["stemmer"].apply(convert_slangword)
     df["stopword"] = df["slang"].apply(stopword.remove_stopword)
@@ -155,6 +163,7 @@ def hasilFileMining(df, selected_column):
     hasil = list(zip(*hasil))
     df['polarity_score'] = hasil[0]
     df['polarity'] = hasil[1]
+    df = df[df.polarity != 'neutral']
     hasil_positive = hasil[3]
     hasil_negative = hasil[4]
 

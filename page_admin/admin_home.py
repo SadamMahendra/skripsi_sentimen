@@ -2,11 +2,9 @@ import streamlit as st
 import pandas as pd
 import function.functions as ft
 from sklearn.model_selection import train_test_split
-from sklearn import metrics
-import pickle
 from streamlit_option_menu import option_menu
 import matplotlib.pyplot as plt
-from sklearn.metrics import plot_confusion_matrix
+from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
 from sklearn.metrics import ConfusionMatrixDisplay
 
@@ -37,6 +35,7 @@ def admin_home():
         st.subheader("Raw Data")
         st.write("Berisikan data yang belum di olah")
         st.write(data_raw)
+        st.info(f"Panjang data: {len(data_raw)}")
 
         @st.cache_data(show_spinner="Data Cache untuk proses sedang disiapkan")
         def load_proses():
@@ -71,39 +70,43 @@ def admin_home():
                 'positive': jumlah_positif
             })
 
-            return df, accuracy, top_10_positive, top_10_negative, ranking, data_chart,y_test, y_train, y_pred, df_classification_report
+            return df, accuracy, svm, top_10_positive, top_10_negative, ranking, data_chart,y_test, y_train, y_pred, df_classification_report
 
-        df, accuracy, top_10_positive, top_10_negative, ranking, data_chart,y_test, y_train, y_pred, df_classification_report = load_proses()
+        df, accuracy, svm, top_10_positive, top_10_negative, ranking, data_chart,y_test, y_train, y_pred, df_classification_report = load_proses()
 
         @st.cache_data
         def show_data():
             st.subheader("Case Folding")
-            st.write("Didalam tahap Case Folding, Memperkecilkan text(lower text), serta membersihkan kata yang tidak perlu seperti nomor dll")
-            st.write(df['caseFolding'])
+            st.write("Memperkecilkan text(lower text)")
+            st.write(df['caseFolding'].head(11))
+
+            st.subheader("Cleansing")
+            st.write("Membersikan yang buka huruf, angka, dan spasi")
+            st.write(df["cleansing"].head(11))
 
             st.subheader("Lematisasi")
             st.write("menyederhakan kata ke dalam bentuk kamus")
-            st.write(df['lemmatizer'])
+            st.write(df['lemmatizer'].head(11))
 
             st.subheader("Stemmer")
             st.write("Penguraian bentuk dari suatu kata menjadi bentuk dasar")
-            st.write(df['stemmer'])
+            st.write(df['stemmer'].head(11))
 
             st.subheader("Slang Word")
-            st.write("Merubah kata alay menjadi kata baku")
-            st.write(df["slang"])
+            st.write("Merubah kata tidak baku menjadi kata baku")
+            st.write(df["slang"].head(11))
 
             st.subheader("Stop Word")
             st.write("Menghapus kata yang tidak perlu")
-            st.write(df["stopword"])
+            st.write(df["stopword"].head(11))
 
             st.subheader("Text Clean")
             st.write("pembersihan text terakhir, di dalam proses ini menghapus kata di bawah 3 huruf")
-            st.write(df["Text_Clean"])
+            st.write(df["Text_Clean"].head(11))
 
             st.subheader("Split Text")
             st.write("membagi setiap kata")
-            st.write(df["Text_Clean_split"])
+            st.write(df["Text_Clean_split"].head(11))
 
             st.subheader("Polarity Count")
             st.write("hasil polarity")
@@ -136,15 +139,35 @@ def admin_home():
             st.subheader("Pembagian Data")
             st.table(data_share)
             
-            st.subheader("Confusion Matrix")
-            fig, ax = plt.subplots()
-            ConfusionMatrixDisplay.from_predictions(y_test, y_pred, ax=ax)                    
-            st.pyplot(fig)
-
             st.subheader("RFC Classification Report")
             st.dataframe(df_classification_report, use_container_width=True)
+            
+            st.subheader("Confusion Matrix")
+            cm = confusion_matrix(y_test,y_pred)
+
+            #menampilkan Confusion Matrix  
+            fig, ax = plt.subplots()
+            ConfusionMatrixDisplay(cm,display_labels=svm.classes_).plot(ax=ax)  
+            st.pyplot(fig)
+
+            cm = confusion_matrix(y_test,y_pred)   
+            TP = cm[1,1]
+            TN = cm[0,0]
+            FN = cm[0,1]
+            FP = cm[1,0]
+            st.table({ "Tipe Data" : ["True Negative","True Positive","False Negative","False Positive"],
+                            "Hasil" : [TN,TP,FN,FP]
+            })
+            result_accuracy = (TN + TP) / (TP + TN + FP + FN)
 
             st.subheader("Akurasi")
+            with st.expander("Rumus"):
+                st.latex(r'''
+                Accuracy =  \frac{TP + TN}{TP + TN + FP + FN}
+                ''')
+                st.latex(r'''
+                Accuracy = \frac{%d + %d}{%d + %d + %d + %d} = {%s}
+                ''' % (TP, TN, TP, TN, FP, FN, result_accuracy))
             st.info(f"Data Memiliki tingkat akurasi {accuracy}")
 
         show_data()
@@ -157,7 +180,7 @@ def admin_home():
             data_raw = pd.read_csv(dataset)
             st.subheader("Row Data")
             st.write(data_raw)
-            st.write(f"Panjang data: {len(data_raw)}")
+            st.info(f"Panjang data: {len(data_raw)}")
 
             column_names = data_raw.columns.tolist()
             selected_column = st.selectbox("Pilih colum yang ingin di analisis",column_names)
@@ -181,38 +204,42 @@ def admin_home():
                     
                     accuracy = f"{predic.round(2)*100}%"
 
-                    return df, accuracy, top_10_positive, top_10_negative, ranking, y_test, y_train, y_pred, df_classification_report
+                    return df, accuracy, svm, top_10_positive, top_10_negative, ranking, y_test, y_train, y_pred, df_classification_report
                 
-                df, accuracy, top_10_positive, top_10_negative, ranking, y_test, y_train, y_pred, df_classification_report = load_proses()
+                df, accuracy, svm, top_10_positive, top_10_negative, ranking, y_test, y_train, y_pred, df_classification_report = load_proses()
 
                 def show_data():
                     st.subheader("Case Folding")
-                    st.write("Didalam tahap Case Folding, Memperkecilkan text(lower text), serta membersihkan kata yang tidak perlu seperti nomor dll")
-                    st.write(df['caseFolding'])
+                    st.write("Memperkecilkan text(lower text)")
+                    st.write(df['caseFolding'].head(11))
+
+                    st.subheader("Cleansing")
+                    st.write("Membersikan yang buka huruf, angka, dan spasi")
+                    st.write(df["cleansing"].head(11))
 
                     st.subheader("Lematisasi")
                     st.write("menyederhakan kata ke dalam bentuk kamus")
-                    st.write(df['lemmatizer'])
+                    st.write(df['lemmatizer'].head(11))
 
                     st.subheader("Stemmer")
                     st.write("Penguraian bentuk dari suatu kata menjadi bentuk dasar")
-                    st.write(df['stemmer'])
+                    st.write(df['stemmer'].head(11))
 
                     st.subheader("Slang Word")
-                    st.write("Merubah kata alay menjadi kata baku")
-                    st.write(df["slang"])
+                    st.write("Merubah kata tidak baku menjadi kata baku")
+                    st.write(df["slang"].head(11))
 
                     st.subheader("Stop Word")
                     st.write("Menghapus kata yang tidak perlu")
-                    st.write(df["stopword"])
+                    st.write(df["stopword"].head(11))
 
                     st.subheader("Text Clean")
                     st.write("pembersihan text terakhir, di dalam proses ini menghapus kata di bawah 3 huruf")
-                    st.write(df["Text_Clean"])
+                    st.write(df["Text_Clean"].head(11))
 
                     st.subheader("Split Text")
                     st.write("membagi setiap kata")
-                    st.write(df["Text_Clean_split"])
+                    st.write(df["Text_Clean_split"].head(11))
 
                     st.subheader("Polarity Count")
                     st.write("hasil polarity")
@@ -240,16 +267,35 @@ def admin_home():
 
                     st.subheader("Pembagian Data")
                     st.table(data_share)
-                    
-                    st.subheader("Confusion Matrix")
-                    fig, ax = plt.subplots()
-                    ConfusionMatrixDisplay.from_predictions(y_test, y_pred, ax=ax)                    
-                    st.pyplot(fig)
 
                     st.subheader("RFC Classification Report")
                     st.dataframe(df_classification_report, use_container_width=True)
+                    
+                    st.subheader("Confusion Matrix")
+                    cm = confusion_matrix(y_test,y_pred)
+
+                    #menampilkan Confusion Matrix  
+                    fig, ax = plt.subplots()
+                    ConfusionMatrixDisplay(cm,display_labels=svm.classes_).plot(ax=ax)  
+                    st.pyplot(fig)
+
+                    TP = cm[1,1]
+                    TN = cm[0,0]
+                    FN = cm[0,1]
+                    FP = cm[1,0]
+                    st.table({ "Tipe Data" : ["True Negative","True Positive","False Negative","False Positive"],
+                                  "Hasil" : [TN,TP,FN,FP]
+                    })
+                    result_accuracy = (TN + TP) / (TP + TN + FP + FN)
 
                     st.subheader("Akurasi")
+                    with st.expander("Rumus"):
+                        st.latex(r'''
+                        Accuracy =  \frac{TP + TN}{TP + TN + FP + FN}
+                        ''')
+                        st.latex(r'''
+                        Accuracy = \frac{%d + %d}{%d + %d + %d + %d} = {%s}
+                        ''' % (TP, TN, TP, TN, FP, FN, result_accuracy))
                     st.info(f"Data Memiliki tingkat akurasi {accuracy}")
 
                     st.download_button(label='Download CSV',data =df.to_csv(), file_name="model_df.csv" ,mime='text/csv')

@@ -6,6 +6,7 @@ import streamlit_authenticator as stauth
 from page_admin.admin_home import admin_home
 from page_admin.admin_record import admin_record
 from page_admin.admin_regis import admin_register
+# from page_admin.admin_upload import admin_upload
 
 #user
 from page_user.user_home import homePage as user_home
@@ -70,11 +71,13 @@ def app():
         st.sidebar.title(f"Hallo, {nama}")   
         
         if level == "admin":
-            menu = ["🏡 Home","📖 Report","⚙️ Account Management"]
+            menu = ["🏡 Home","💬 Sentiment Predictor","📖 Report","⚙️ Account Management","lohe"]
             selected = st.sidebar.selectbox("Navigasi",menu)
             authenticator.logout("logout","sidebar")  
             if selected == "🏡 Home":
                 admin_home()
+            if selected == "💬 Sentiment Predictor":
+                user_home()
             if selected == "📖 Report":
                 admin_record()
             if selected == "⚙️ Account Management":
