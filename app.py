@@ -71,7 +71,7 @@ def app():
         st.sidebar.title(f"Hallo, {nama}")   
         
         if level == "admin":
-            menu = ["🏡 Home","💬 Sentiment Predictor","📖 Report","⚙️ Account Management","lohe"]
+            menu = ["🏡 Home","💬 Sentiment Predictor","📖 Report","⚙️ Account Management"]
             selected = st.sidebar.selectbox("Navigasi",menu)
             authenticator.logout("logout","sidebar")  
             if selected == "🏡 Home":
