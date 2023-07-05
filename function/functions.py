@@ -4,7 +4,7 @@ import pandas as pd
 from nlp_id.lemmatizer import Lemmatizer
 from nlp_id.stopword import StopWord
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 import nltk
 from nltk import word_tokenize
 from sklearn.svm import SVC
@@ -105,6 +105,36 @@ def process_data(df):
     y = df['polarity']
     return X, y
 
+# def hitung_kamus(df):
+#     # Mengubah kolom 'Text_Clean' menjadi tipe data string
+#     df['Text_Clean_New'] = df['Text_Clean'].astype(str)
+
+#     # Menghitung frekuensi kemunculan kata dengan CountVectorizer
+#     count_vectorizer = CountVectorizer(tokenizer=word_tokenize)
+#     ulasan = df['Text_Clean_New'].values.tolist()
+#     X_count = count_vectorizer.fit_transform(ulasan)
+
+#     # Menginisialisasi dan melatih model TF-IDF dengan TfidfVectorizer
+#     tfidf = TfidfVectorizer()
+#     X_tfidf = tfidf.fit_transform(ulasan)
+
+#     # Mendapatkan kata-kata unik dari kamus
+#     kata_unik = count_vectorizer.get_feature_names()
+
+#     # Menghitung frekuensi kemunculan dan nilai TF-IDF untuk setiap kata
+#     kamus = {}
+#     for i, kata in enumerate(kata_unik):
+#         kamus[kata] = {
+#             'Frekuensi': X_count[:, i].sum(),
+#             'TF-IDF': tfidf.idf_[tfidf.vocabulary_[kata]]
+#         }
+
+#     # Membuat DataFrame dari kamus
+#     df_kamus = pd.DataFrame.from_dict(kamus, orient='index')
+#     df_kamus.index.name = 'Kata'
+
+#     return df_kamus
+
 #ranking
 def calculate_tfidf_ranking(df):
     max_features = len(df)
@@ -130,7 +160,8 @@ def calculate_tfidf_ranking(df):
 def hasilTextMining(text):
     text = re.sub(r'j&t', 'jnt', text, flags=re.IGNORECASE)
     caseFolding = CaseFolding(text)
-    lematisasi = lemmatizer.lemmatize(caseFolding)
+    clean = cleansing(caseFolding)
+    lematisasi = lemmatizer.lemmatize(clean)
     stemmerWord = stemmer.stem(lematisasi)    
     slangWord = convert_slangword(stemmerWord)
     stopWord = stopword.remove_stopword(slangWord)

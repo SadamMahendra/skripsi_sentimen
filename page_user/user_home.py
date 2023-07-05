@@ -1,6 +1,8 @@
 import streamlit as st
 import pickle
 from function.functions import hasilTextMining
+import pandas as pd
+
 
 pickle_in = open('./data/model.pkl', 'rb')
 svm,tfidf = pickle.load(pickle_in)
@@ -19,8 +21,8 @@ def homePage():
         positive_negative = {
             "positive": [],
             "negative": [],
-            "neutral": []
         }
+        neutral = []
         for i in hasil_bersih:
             tf = tfidf.transform([i])
             hasil = svm.predict(tf)
@@ -29,7 +31,7 @@ def homePage():
             if (hasil[0] ==  "positive"):
                 positive_negative["positive"].append(i)
             if (hasil[0] == "neutral"):
-                positive_negative["neutral"].append(i)
+                neutral.append(i)
         
         positive_count = len(positive_negative["positive"])
         negative_count = len(positive_negative["negative"])
@@ -39,7 +41,9 @@ def homePage():
         else:
             st.success("Hasil: Text berdominan positive")
 
-        st.write(positive_negative)
+        positive_negative_df = pd.DataFrame.from_dict(positive_negative, orient='index').transpose()
+        positive_negative_df = positive_negative_df.fillna('')
+        st.dataframe(positive_negative_df, hide_index=True, use_container_width=True)
 
 if __name__ == "__main__":
     homePage()

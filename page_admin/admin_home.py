@@ -4,9 +4,8 @@ import function.functions as ft
 from sklearn.model_selection import train_test_split
 from streamlit_option_menu import option_menu
 import matplotlib.pyplot as plt
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import classification_report
-from sklearn.metrics import ConfusionMatrixDisplay
+from sklearn.metrics import confusion_matrix , ConfusionMatrixDisplay , classification_report
+
 
 
 @st.cache_data
@@ -139,7 +138,7 @@ def admin_home():
             st.subheader("Pembagian Data")
             st.table(data_share)
             
-            st.subheader("RFC Classification Report")
+            st.subheader("Classification Report")
             st.dataframe(df_classification_report, use_container_width=True)
             
             st.subheader("Confusion Matrix")
@@ -150,7 +149,6 @@ def admin_home():
             ConfusionMatrixDisplay(cm,display_labels=svm.classes_).plot(ax=ax)  
             st.pyplot(fig)
 
-            cm = confusion_matrix(y_test,y_pred)   
             TP = cm[1,1]
             TN = cm[0,0]
             FN = cm[0,1]
@@ -171,7 +169,7 @@ def admin_home():
             st.info(f"Data Memiliki tingkat akurasi {accuracy}")
 
         show_data()
-
+        
     if selected == "Sentimen Predictor File":
         st.header("Sentimen Predictor File")
         dataset = st.file_uploader("Upload Dataset", type="csv")
@@ -200,7 +198,6 @@ def admin_home():
 
                     # Konversi laporan menjadi DataFrame pandas
                     df_classification_report = pd.DataFrame(report).transpose()
-
                     
                     accuracy = f"{predic.round(2)*100}%"
 
@@ -268,7 +265,7 @@ def admin_home():
                     st.subheader("Pembagian Data")
                     st.table(data_share)
 
-                    st.subheader("RFC Classification Report")
+                    st.subheader("Classification Report")
                     st.dataframe(df_classification_report, use_container_width=True)
                     
                     st.subheader("Confusion Matrix")

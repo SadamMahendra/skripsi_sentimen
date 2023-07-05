@@ -9,6 +9,7 @@ from page_admin.admin_regis import admin_register
 # from page_admin.admin_upload import admin_upload
 
 #user
+from page_user.user_dashboard import user_dashboard
 from page_user.user_home import homePage as user_home
 from page_user.user_record import user_record
 from page_user.user_update import user_update
@@ -87,6 +88,8 @@ def app():
             menu = ["💬 Sentiment Predictor","📖 Report", "⚙️ Account Management"]
             selected = st.sidebar.selectbox("Navigasi",menu)
             authenticator.logout("logout","sidebar")  
+            # if selected == "📊 Home":
+            #     user_dashboard()
             if selected == "💬 Sentiment Predictor":
                 user_home()
             if selected == "📖 Report":
