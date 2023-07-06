@@ -15,6 +15,7 @@ from page_user.user_home import homePage as user_home
 from page_user.user_record import user_record
 from page_user.user_update import user_update
 
+@st.cache_data(show_spinner=False)
 def add_background():
     image_file = 'data/bg.png'
     with open(image_file, "rb") as image_file:
