@@ -45,14 +45,13 @@ def admin_register(username):
                 st.experimental_rerun()
             
     if selected == "Update":
-        with st.form("Update Account"):
+        with st.expander("Update Account",expanded=True):
             usernames = list(set(data["Username"]))
             selected_username = st.selectbox("Pilih Username yang ingin di ubah", usernames)
             response = db.get_user(selected_username) 
             user_data = response 
             names = user_data["name"]
             levels = user_data['level']
-
             level_person = lvl(levels)
 
             name = st.text_input("Masukan Nama :", names)
@@ -61,13 +60,14 @@ def admin_register(username):
             hashed_password = hashed_passwords[0]
             options = ("admin", "user")
             level = st.selectbox("Masukan Level :" ,options, level_person)
-            button_update = st.form_submit_button("Update")
+            button_update = st.button("Update")
 
             if button_update:
                 if name == "" or password == "" or level == "":
                     st.warning("Tolong Masukan Semua Datanya")
                 else :
                     db.update_user(selected_username,updates={"name" : name, "password" : hashed_password , "level" : level})
+                    st.success(f"Berhasil mengupdate {selected_username}")
                     time.sleep(1)
                     st.experimental_rerun()
 
