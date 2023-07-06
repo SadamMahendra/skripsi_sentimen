@@ -1,7 +1,7 @@
 import re
 from unidecode import unidecode
 import pandas as pd
-from nlp_id.lemmatizer import Lemmatizer
+# from nlp_id.lemmatizer import Lemmatizer
 from nlp_id.stopword import StopWord
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
@@ -32,7 +32,7 @@ def cleansing(text):
     return text
 
 #lematizer
-lemmatizer = Lemmatizer()
+# lemmatizer = Lemmatizer()
 
 #Stemmer
 factory = StemmerFactory()
@@ -176,8 +176,8 @@ def hasilTextMining(text):
     text = re.sub(r'j&t', 'jnt', text, flags=re.IGNORECASE)
     caseFolding = CaseFolding(text)
     clean = cleansing(caseFolding)
-    lematisasi = lemmatizer.lemmatize(clean)
-    stemmerWord = stemmer.stem(lematisasi)    
+    # lematisasi = lemmatizer.lemmatize(clean)
+    stemmerWord = stemmer.stem(clean)    
     slangWord = convert_slangword(stemmerWord)
     stopWord = stopword.remove_stopword(slangWord)
     unwatedWord = RemoveUnwantedwords(stopWord)
@@ -197,8 +197,8 @@ def hasilFileMining(df, selected_column):
     df[selected_column] = df[selected_column].str.replace('j&t', 'jnt', case=False)
     df["caseFolding"] = df[selected_column].apply(CaseFolding)
     df["cleansing"] = df["caseFolding"].apply(cleansing)
-    df["lemmatizer"] = df["cleansing"].apply(lemmatizer.lemmatize)
-    df["stemmer"] = df["lemmatizer"].apply(stemmer.stem)
+    # df["lemmatizer"] = df["cleansing"].apply(lemmatizer.lemmatize)
+    df["stemmer"] = df["cleansing"].apply(stemmer.stem)
     df["slang"] = df["stemmer"].apply(convert_slangword)
     df["stopword"] = df["slang"].apply(stopword.remove_stopword)
     df["Text_Clean"] = df["stopword"].apply(RemoveUnwantedwords)

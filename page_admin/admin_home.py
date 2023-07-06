@@ -79,10 +79,6 @@ def admin_home():
             st.write("Membersihkan teks dari karakter yang tidak diinginkan seperti huruf besar, angka, dan spasi")
             st.write(df["cleansing"].head(11))
 
-            st.subheader("Lematisasi")
-            st.write("Mengubah kata-kata dalam teks menjadi bentuk dasarnya berdasarkan kamus")
-            st.write(df['lemmatizer'].head(11))
-
             st.subheader("Stemmer")
             st.write("Menguraikan kata-kata dalam teks menjadi bentuk dasarnya")
             st.write(df['stemmer'].head(11))
@@ -211,10 +207,6 @@ def admin_home():
                     st.subheader("Cleansing")
                     st.write("Membersihkan teks dari karakter yang tidak diinginkan seperti huruf besar, angka, dan spasi")
                     st.write(df["cleansing"].head(11))
-
-                    st.subheader("Lematisasi")
-                    st.write("Mengubah kata-kata dalam teks menjadi bentuk dasarnya berdasarkan kamus")
-                    st.write(df['lemmatizer'].head(11))
 
                     st.subheader("Stemmer")
                     st.write("Menguraikan kata-kata dalam teks menjadi bentuk dasarnya")
