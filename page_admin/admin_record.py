@@ -81,13 +81,13 @@ def admin_record():
         min_date = df['at'].dt.date.min()
         max_date = df['at'].dt.date.max()
 
-        current_date = date.today()
+        # current_date = date.today()
 
         # Memperbarui tanggal maksimum menjadi tanggal saat ini
-        max_date = current_date
+        # max_date = current_date
 
         # Menampilkan tanggal input dengan nilai default
-        tanggal = st.date_input("Pilih Tanggal:", min_value=min_date, max_value=max_date, value=current_date)
+        tanggal = st.date_input("Pilih Tanggal:", min_value=min_date, max_value=max_date, value=date(2019, 1, 1))
 
         tanggal = pd.to_datetime(tanggal)
 

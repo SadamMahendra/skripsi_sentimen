@@ -95,6 +95,21 @@ def sentiment_analysis_lexicon_indonesia(text):
     result = {'positif': positive_words,'negatif':negative_words,'netral': neutral_words}
     return score, polarity, result, positive_words, negative_words
 
+#Polarity Tahunan
+def Polarity_Tahunan(df):
+    # Mengubah kolom 'at' menjadi tipe datetime jika belum
+    df['at'] = pd.to_datetime(df['at'])
+
+    # Membuat kolom baru 'year' untuk menyimpan tahun dari kolom 'at'
+    df['year'] = df['at'].dt.year
+
+    # Menghitung jumlah nilai positif dan negatif untuk setiap tahun
+    df_grouped = df.groupby(['year', 'polarity']).size().unstack(fill_value=0)
+
+    # Menghilangkan tanda koma pada label sumbu x
+    df_grouped.index = df_grouped.index.astype(str)
+    return df_grouped
+
 #tfidf
 def process_data(df):
     df['Text_Clean_New'] = df['Text_Clean'].astype(str)

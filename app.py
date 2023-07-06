@@ -1,18 +1,35 @@
 import streamlit as st
 from deta import Deta
 import streamlit_authenticator as stauth
+import base64
 
 #admin
 from page_admin.admin_home import admin_home
 from page_admin.admin_record import admin_record
 from page_admin.admin_regis import admin_register
-# from page_admin.admin_upload import admin_upload
+from page_admin.admin_upload import admin_upload
 
 #user
 from page_user.user_dashboard import user_dashboard
 from page_user.user_home import homePage as user_home
 from page_user.user_record import user_record
 from page_user.user_update import user_update
+
+def add_background():
+    image_file = 'data/bg.png'
+    with open(image_file, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read())
+    st.markdown(
+    f"""
+    <style>
+    .stApp {{
+        background-image: url(data:image/{"png"};base64,{encoded_string.decode()});
+        background-size: cover
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
+    )
 
 deta = Deta(st.secrets["db_key"])
 db = deta.Base("users")
@@ -42,6 +59,8 @@ st.set_page_config(
 )
 
 def app():
+    add_background()
+
     users = fetch_all_users()
     usernames = [user["key"] for user in users]
     names = [users["name"] for users in users]
