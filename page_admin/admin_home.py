@@ -44,6 +44,10 @@ def admin_home():
             # Top 10 Positif dan Negatif
             top_10_positive, top_10_negative = ft.process_top_10_words(hasil_positive, hasil_negative)
 
+            #WordCloud
+            wordcloud_positive = ft.wordcloud_positive(df)
+            wordcloud_negative = ft.wordcloud_negative(df)
+
             # TF-IDF
             X, y = ft.process_data(df)
 
@@ -65,9 +69,9 @@ def admin_home():
             # Polarity Tahunan
             data_chart = ft.Polarity_Tahunan(df)
 
-            return df, accuracy, svm, top_10_positive, top_10_negative, X, data_chart, y_test, y_train, y_pred, df_classification_report
+            return df, accuracy, wordcloud_positive, wordcloud_negative, svm, top_10_positive, top_10_negative, X, data_chart, y_test, y_train, y_pred, df_classification_report
 
-        df, accuracy, svm, top_10_positive, top_10_negative, X, data_chart, y_test, y_train, y_pred, df_classification_report = load_proses()
+        df, accuracy, wordcloud_positive, wordcloud_negative,svm, top_10_positive, top_10_negative, X, data_chart, y_test, y_train, y_pred, df_classification_report = load_proses()
 
         @st.cache_data
         def show_data():
@@ -108,6 +112,14 @@ def admin_home():
 
             with st.expander("Polarity Tahunan", expanded=True):
                 st.line_chart(data_chart)
+
+            with st.expander("wordcloud", expanded=True):
+                colw1,colw2 = st.columns(2)
+                with colw1:
+                    st.pyplot(wordcloud_positive)
+
+                with colw2:
+                    st.pyplot(wordcloud_negative)
 
             st.subheader("TF-IDF")
             with st.expander("Output TF-IDF",expanded=True):
@@ -180,24 +192,37 @@ def admin_home():
             submitFile = st.button("Analisis")
             if submitFile:
                 def load_proses():
-                    df, hasil_positive, hasil_negative = ft.hasilFileMining(data_raw,selected_column)
+                    # Cleaning Data
+                    df, hasil_positive, hasil_negative = ft.hasilFileMining(data_raw, selected_column)
+
+                    # Top 10 Positif dan Negatif
                     top_10_positive, top_10_negative = ft.process_top_10_words(hasil_positive, hasil_negative)
-                    ranking = ft.calculate_tfidf_ranking(df)
+
+                    #WordCloud
+                    wordcloud_positive = ft.wordcloud_positive(df)
+                    wordcloud_negative = ft.wordcloud_negative(df)
+
+                    # TF-IDF
                     X, y = ft.process_data(df)
+
+                    # Membagi data menjadi data latih dan data uji
                     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=0)
+
+                    # Melakukan prediksi dengan menggunakan model SVM
                     predic, svm, y_pred = ft.predic_SVM(X_train, X_test, y_train, y_test)
 
-                    # Simpan laporan klasifikasi dalam variabel
+                    # laporan klasifikasi
                     report = classification_report(y_test, y_pred, output_dict=True)
 
                     # Konversi laporan menjadi DataFrame pandas
                     df_classification_report = pd.DataFrame(report).transpose()
-                    
-                    accuracy = f"{predic.round(2)*100}%"
 
-                    return df, accuracy, svm, top_10_positive, top_10_negative, X, y_test, y_train, y_pred, df_classification_report
-                
-                df, accuracy, svm, top_10_positive, top_10_negative, X, y_test, y_train, y_pred, df_classification_report = load_proses()
+                    # Menghitung akurasi prediksi
+                    accuracy = f"{predic.round(2) * 100}%"
+
+                    return df, accuracy, wordcloud_positive, wordcloud_negative, svm, top_10_positive, top_10_negative, X, y_test, y_train, y_pred, df_classification_report
+
+                df, accuracy, wordcloud_positive, wordcloud_negative,svm, top_10_positive, top_10_negative, X, y_test, y_train, y_pred, df_classification_report = load_proses()
 
                 def show_data():
                     st.subheader("Case Folding")
@@ -234,6 +259,14 @@ def admin_home():
 
                     with st.expander("Polarity", expanded=True):
                         st.bar_chart(df["polarity"].value_counts())
+
+                    with st.expander("wordcloud", expanded=True):
+                        colw1,colw2 = st.columns(2)
+                        with colw1:
+                            st.pyplot(wordcloud_positive)
+
+                        with colw2:
+                            st.pyplot(wordcloud_negative)
 
                     st.subheader("TF-IDF")
                     with st.expander("Output TF-IDF",expanded=True):

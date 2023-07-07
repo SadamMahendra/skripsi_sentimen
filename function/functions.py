@@ -9,6 +9,8 @@ import nltk
 from nltk import word_tokenize
 from sklearn.svm import SVC
 from sklearn import metrics
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
 
 #kamuss
 df_positive = pd.read_csv('https://raw.githubusercontent.com/ramaprakoso/analisis-sentimen/master/kamus/positif_ta2.txt', sep='\t',names=['positive'])
@@ -214,6 +216,35 @@ def hasilFileMining(df, selected_column):
     hasil_negative = hasil[4]
 
     return df, hasil_positive, hasil_negative
+
+#wordCloud
+def wordcloud_positive(df):
+    df_positive = df[df["polarity"] == "positive"]
+
+    text_positive = ' '.join(df_positive['Text_Clean'])
+
+    wordcloud_positive = WordCloud(width=800, height=800, background_color='white', colormap='Greens').generate(text_positive)
+
+    fig, axs = plt.subplots(figsize=(8, 3))
+    axs.imshow(wordcloud_positive, interpolation='bilinear')
+    axs.set_title('Positive Words')
+    axs.axis('off')
+
+    return fig
+
+def wordcloud_negative(df):
+    df_negative = df[df["polarity"] == "negative"]
+
+    text_negative = ' '.join(df_negative['Text_Clean'])
+
+    wordcloud_negative = WordCloud(width=800, height=800, background_color='white', colormap='Reds').generate(text_negative)
+
+    fig, axs = plt.subplots(figsize=(8, 3))
+    axs.imshow(wordcloud_negative, interpolation='bilinear')
+    axs.set_title('Negative Words')
+    axs.axis('off')
+
+    return fig
 
 #top word setiap 10 kata negatif dan positif
 def process_top_10_words(hasil_positive,hasil_negative):
