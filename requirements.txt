@@ -10,3 +10,4 @@ streamlit_authenticator==0.2.2
 streamlit_option_menu==0.3.6
 xlsxwriter==3.0.3
 unidecode==1.2.0
+wordcloud==1.9.2
