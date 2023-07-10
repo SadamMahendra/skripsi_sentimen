@@ -13,7 +13,7 @@ from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 
 #kamuss
-df_positive = pd.read_csv('https://raw.githubusercontent.com/ramaprakoso/analisis-sentimen/master/kamus/positif_ta2.txt', sep='\t',names=['positive'])
+df_positive = pd.read_csv('https://raw.githubusercontent.com/SadamMahendra/ID-NegPos/main/positive.txt', sep='\t',names=['positive'])
 list_positive = list(df_positive.iloc[::,0])
 df_negative = pd.read_csv('https://raw.githubusercontent.com/SadamMahendra/ID-NegPos/main/negative.txt', sep='\t',names=['negative'])
 list_negative = list(df_negative.iloc[::,0])
