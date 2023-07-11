@@ -161,7 +161,8 @@ def admin_home():
             st.dataframe({ "Tipe Data" : ["True Negative","True Positive","False Negative","False Positive"],
                             "Hasil" : [TN,TP,FN,FP]
             }, use_container_width=True)
-            result_accuracy = round((TN + TP) / (TP + TN + FP + FN),3)*100
+            accuracy_cm = (TP + TN) / (TP + TN + FP + FN)
+            result_accuracy = round(accuracy_cm,3)*100
 
             st.subheader("Akurasi")
             with st.expander("Rumus"):
@@ -308,7 +309,9 @@ def admin_home():
                     st.dataframe({ "Tipe Data" : ["True Negative","True Positive","False Negative","False Positive"],
                                   "Hasil" : [TN,TP,FN,FP]
                     },use_container_width=True)
-                    result_accuracy = round((TN + TP) / (TP + TN + FP + FN),3)*100
+                    
+                    accuracy_cm = (TP + TN) / (TP + TN + FP + FN)
+                    result_accuracy = round(accuracy_cm,3)*100
 
                     st.subheader("Akurasi")
                     with st.expander("Rumus"):
