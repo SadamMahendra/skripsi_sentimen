@@ -158,9 +158,9 @@ def admin_home():
             TN = cm[0,0]
             FN = cm[0,1]
             FP = cm[1,0]
-            st.dataframe({ "Tipe Data" : ["True Negative","True Positive","False Negative","False Positive"],
+            st.dataframe({ "Tipe Data" : ["True Negative (TN)","True Positive (TP)","False Negative (FN)","False Positive (FP)"],
                             "Hasil" : [TN,TP,FN,FP]
-            }, use_container_width=True)
+            },use_container_width=True)
             accuracy_cm = (TP + TN) / (TP + TN + FP + FN)
             result_accuracy = round(accuracy_cm,3)*100
 
@@ -306,7 +306,7 @@ def admin_home():
                     TN = cm[0,0]
                     FN = cm[0,1]
                     FP = cm[1,0]
-                    st.dataframe({ "Tipe Data" : ["True Negative","True Positive","False Negative","False Positive"],
+                    st.dataframe({ "Tipe Data" : ["True Negative (TN)","True Positive (TP)","False Negative (FN)","False Positive (FP)"],
                                   "Hasil" : [TN,TP,FN,FP]
                     },use_container_width=True)
                     
