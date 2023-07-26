@@ -7,7 +7,7 @@ import base64
 from page_admin.admin_home import admin_home
 from page_admin.admin_record import admin_record
 from page_admin.admin_regis import admin_register
-from page_admin.admin_upload import admin_upload
+# from page_admin.admin_upload import admin_upload
 
 #user
 from page_user.user_dashboard import user_dashboard
@@ -108,8 +108,8 @@ def app():
             menu = ["💬 Sentiment Predictor","📖 Report", "⚙️ Account Management"]
             selected = st.sidebar.selectbox("Navigasi",menu)
             authenticator.logout("logout","sidebar")  
-            # if selected == "📊 Home":
-            #     user_dashboard()
+            # if selected == "test":
+            #     admin_upload()
             if selected == "💬 Sentiment Predictor":
                 user_home()
             if selected == "📖 Report":

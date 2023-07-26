@@ -10,7 +10,7 @@ from sklearn.metrics import confusion_matrix , ConfusionMatrixDisplay , classifi
 
 @st.cache_data
 def data_raw_jnt ():
-    return pd.read_csv("./data/Scrapped_J&T.csv")
+    return pd.read_csv("./data/5000data.csv")
 
 def admin_home():
     st.header("🏡 Home",
