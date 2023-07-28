@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from datetime import date
+import function.functions as ft
 import io
 
 # buffer to use for excel writer
@@ -59,6 +60,10 @@ def admin_record():
                     st.success(f"Polarity yang dominan adalah dari {total_count} Kalimat adalah POSITIF")
                 else:
                     st.info("Jumlah kemunculan 'negatif' dan 'positif' sama")
+
+            dataline = ft.Polarity_Mingguan(filtered_df)
+            with st.expander("Grafik",expanded=True):
+                st.line_chart(dataline)
             
             #csv
             st.download_button(label='🖨️ Download CSV',data =filter_dataframe.to_csv()
@@ -115,6 +120,10 @@ def admin_record():
                     st.success(f"Polarity yang dominan adalah dari {total_count} Kalimat adalah POSITIF")
                 else:
                     st.info("Jumlah kemunculan 'negatif' dan 'positif' sama")
+
+            dataline = ft.Polarity_Harian(filtered_df)
+            with st.expander("Grafik",expanded=True):
+                st.bar_chart(dataline)
                         
             #csv
             st.download_button(label='🖨️ Download CSV',data =filter_dataframe.to_csv(), file_name="Data Mingguan.csv" ,mime='text/csv')

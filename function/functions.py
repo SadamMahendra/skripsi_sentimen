@@ -112,6 +112,32 @@ def Polarity_Tahunan(df):
     df_grouped.index = df_grouped.index.astype(str)
     return df_grouped
 
+#Polarity harian
+def Polarity_Harian(df):
+    df['at'] = pd.to_datetime(df['at'])
+
+    df['day'] = df['at'].dt.date
+
+    df_grouped = df.groupby(['day', 'polarity']).size().unstack(fill_value=0)
+
+    df_grouped.index = df_grouped.index.astype(str)
+    return df_grouped
+
+def Polarity_Mingguan(df):
+    # Mengubah kolom 'at' menjadi tipe datetime jika belum
+    df['at'] = pd.to_datetime(df['at'])
+
+    df.set_index('at', inplace=True)
+ 
+    df['week'] = df.index.day // 7 + 1
+
+    # Menghitung jumlah nilai positif dan negatif untuk setiap minggu
+    df_grouped = df.groupby(['week', 'polarity']).size().unstack(fill_value=0)
+
+    # Menghilangkan tanda koma pada label sumbu x
+    df_grouped.index = df_grouped.index.astype(str)
+    return df_grouped
+
 #tfidf
 def process_data(df):
     df['Text_Clean_New'] = df['Text_Clean'].astype(str)
